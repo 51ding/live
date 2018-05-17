@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <title>Document</title>
+</head>
+<body>
+<label for="">登录名</label>
+<input type="text" id="name">
+<label for="">密码</label>
+<input type="text" id="pwd">
+<button class="btn" id="login">登录</button>
+<button class="btn" id="register">注册</button>
+<button id="loginout" class="btn">退出</button>
+<script src="/js/jquery.min.js"></script>
+<script>
+  $("#login").click(function () {
+    var data = {
+      name: $("#name").val(),
+      pwd: $("#pwd").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: "/live/test/login",
+      data: data,
+      dataType: "json",
+      success: function (response) {
+      	if(response.code!=0){
+          return alert(response.msg);
+        }
+      	window.location.href="/live/guest";
+      }
+    })
+  })
+  $("#register").click(function () {
+    var data = {
+      name: $("#name").val(),
+      pwd: $("#pwd").val()
+    };
+    $.ajax({
+      type: "POST",
+      url: "/live/test/register",
+      data: data,
+      dataType: "json",
+      success: function (response) {
+        if(response.code!=0){
+          alert(response.msg);
+        }
+        else{
+          alert("注册成功！");
+        }
+      }
+    })
+  })
+  $("#loginout").click(function(){
+  	$.ajax({
+  		url:"/live/test/loginout",
+  		type:"POST",
+  		dataType:"json",
+  		success:function(response){
+  			if(response.code==0) window.location.href="/live/test";
+  		}
+  	})
+  })
+</script>
+</body>
+</html>

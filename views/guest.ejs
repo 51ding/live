@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>视频直播</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            outline: none;
+        }
+        .fl {
+            float: left;
+        }
+
+        .fr {
+            float: right;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .live-video {
+            width: 80%;
+            height: 100%;
+            border: 1px solid rgb(209, 220, 229);
+            box-sizing: border-box;
+            float: left;
+        }
+        .video {
+            width: 100%;
+            height: 100%;
+        }
+        .video-chat {
+            width: 20%;
+            height: 100%;
+            border: 1px solid rgb(209, 220, 229);
+            border-left: none;
+            box-sizing: border-box;
+            float: left;
+            position: relative;
+        }
+        .chat-herder {
+            width: 100%;
+            height: 5%;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 300;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .discuss, .member {
+            width: 50%;
+            height: 98%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .discuss:hover, .member:hover {
+            border-bottom: 2px solid rgb(154, 206, 253);
+        }
+        .active {
+            /*background-color: rgb(154, 206, 253);*/
+            background: #d0e7f7
+        }
+        .footer {
+            width: 100%;
+            height: 15%;
+            box-sizing: border-box;
+            position: absolute;
+            bottom: 0;
+            background: #d0e7f7
+        }
+        .footer-textarea {
+            width: 100%;
+            border: 1px solid rgb(209, 220, 229);
+            height: 70%;
+            border-radius: 5px;
+            resize: none;
+            border-left: 0;
+            background: #cecece
+        }
+        .footer-button {
+            border: none;
+            width: 100px;
+            height: 30px;
+            border-radius: 5px;
+            background-color: #20a0ff;
+            color: #fff;
+            cursor: pointer;
+        }
+        .footer-button:hover{
+            background: #4db3ff;
+            border-color: #4db3ff;
+            color: #fff;
+        }
+        .footer-button:active {
+            border-radius: 5px;
+            background-color: #20a0ff;
+            border-color: #4db3ff;
+            color: #fff;
+            border: none;
+        }
+        .chat-content {
+            width: 100%;
+            padding: 5px 5px;
+            height: 80%;
+            box-sizing:border-box;
+            overflow: auto;
+            background: #d0e7f7;
+        }
+        .message {
+            width: 70%;
+            margin-left:2%;
+            height: auto;
+            font-size: 14px;
+            background-color: rgb(242,242,242);
+            margin-bottom: 10px;
+            border: 3px solid #b3b3b0;
+            border-radius: 15px;
+            margin-top:15px;
+        }
+        .message_2{
+            width: 70%;
+            margin-left:28%;
+            height: auto;
+            font-size: 14px;
+            background-color: rgb(242,242,242);
+            margin-bottom: 10px;
+            border: 3px solid #69b0f5;
+            border-radius: 15px;
+            margin-top:15px;
+        }
+        .name {
+            padding: 5px;
+            color: rgb(0,0,255)
+        }
+        .content {
+            padding: 5px;
+            word-break: break-all;
+            padding-left: 2em;
+        }
+        .members {
+            height: 90%;
+            display: none;
+            padding: 5px;
+            font-size: 14px;
+            font-weight: 300;
+            background: #d0e7f7
+        }
+        .members div {
+            margin-bottom: 10px;
+        }
+        .Personnel_list{
+            height: 35px;
+            padding-left: 15px;
+            line-height: 35px;
+            /*color: #5d6340;*/
+            border-bottom:dashed 2px #d0d0ce;
+        }
+        .showFull {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            background-color: black;
+        }
+    </style>
+    <script>
+        var userSig = '<%= userSig %>';
+        var token = '<%= token %>';
+    </script>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/artTemplate.js"></script>
+    <script type="text/javascript" src="/js/toastr.min.js"></script>
+    <script type="text/javascript" src="/js/iLiveSDK.js"></script>
+    <script src="/js/live.js"></script>
+</head>
+<body onload="OnInit()" onunload="OnUninit()">
+<div style="width:1px;height:1px">
+    <object id="iLiveSDKCom" classid="CLSID:54E71417-216D-47A2-9224-C991A099C531" codebase="/cab/iLiveSDK.cab#version=1,6,0,0"></object>
+</div>
+<div class="container">
+    <div class="live-video">
+        <div class="video"></div>
+    </div>
+    <div class="video-chat">
+        <div class="chat-herder">
+            <div class="discuss fl active">
+                讨论区
+            </div>
+            <div class="member fr">
+                成员(12)
+            </div>
+        </div>
+        <div class="members">
+            <div class="Personnel_list">
+                <span><img src="nan.png"></span> <label>5455454</label>
+            </div>
+            <div class="Personnel_list">
+                <span><img src="nan.png"></span> <label>5455454</label>
+            </div>
+            <div class="Personnel_list">
+                <span><img src="nv.png"></span> <label>5455454</label>
+            </div>
+            <div class="Personnel_list">
+                <span><img src="nan.png"></span> <label>5455454</label>
+            </div>
+            <div class="Personnel_list">
+                <span><img src="nv.png"></span> <label>5455454</label>
+            </div>
+            <div class="Personnel_list">
+                <span><img src="nan.png"></span> <label>5455454</label>
+            </div>
+            <div class="Personnel_list">
+                <span><img src="nan.png"></span> <label>5455454</label>
+            </div>
+        </div>
+        <div class="chat-content">
+            <div class="message">
+                <div class="name">坑猴</div>
+                <div class="content">6666666666666666666666666666666666666666666666666666666666666666666666666666666666</div>
+            </div>
+            <div class="message_2">
+                <div class="name">坑猴</div>
+                <div class="content">666666666666666666666666666666666666</div>
+            </div>
+            <div class="message_2">
+                <div class="name">坑猴</div>
+                <div class="content">66666666666666</div>
+            </div>
+            <div class="message_2">
+                <div class="name">坑猴</div>
+                <div class="content">66666666666666666666666666666666666666666666666666666666</div>
+            </div>
+            <div class="message">
+                <div class="name">坑猴</div>
+                <div class="content">66666666666666666666666666666666666666666666666666666666</div>
+            </div>
+        </div>
+        <div class="footer">
+            <textarea cols="20" rows="5" class="footer-textarea"></textarea>
+            <button class="footer-button fr">发言</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    // 绑定类名
+    function bindClass(ele, className) {
+        if (ele.className.indexOf(className) == -1) {
+            ele.className += ' ' + className
+        }
+    }
+    // 解除类名
+    function unBindClass(ele, className) {
+        if (ele.className.indexOf(className) != -1) {
+            var className = ele.className.split(' ')
+            className.splice(ele.className.indexOf(className), 1)
+            ele.className = className.join(' ')
+        }
+    }
+    // 显示讨论区
+    function showDiscuss() {
+        chatContent.style.display = 'block'
+        footer.style.display = 'block'
+        members.style.display = 'none'
+    }
+    // 显示成员
+    function showMember() {
+        chatContent.style.display = 'none'
+        footer.style.display = 'none'
+        members.style.display = 'block'
+    }
+    //进入全屏
+    function requestFullScreen(ele) {
+        if (ele.requestFullscreen) {
+            ele.requestFullscreen();
+        }
+        //FireFox
+        else if (ele.mozRequestFullScreen) {
+            ele.mozRequestFullScreen();
+        }
+        //Chrome等
+        else if (ele.webkitRequestFullScreen) {
+            ele.webkitRequestFullScreen();
+        }
+        //IE11
+        else if (ele.msRequestFullscreen) {
+            ele.msRequestFullscreen();
+        } else {
+            bindClass(ele, 'showFull')
+            var WshShell = new ActiveXObject('WScript.Shell')
+            WshShell.SendKeys('{F11}');
+        }
+    }
+    //退出全屏
+    function exitFullscreen(ele) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+        else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        }
+        else if (document.webkitCancelFullScreen) {
+            document.webkitCancelFullScreen();
+        }
+        else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        } else {
+            unBindClass(ele, 'showFull')
+            var WshShell = new ActiveXObject('WScript.Shell')
+            WshShell.SendKeys('{F11}');
+        }
+    }
+    var discuss = document.getElementsByClassName('discuss')[0]
+    var member = document.getElementsByClassName('member')[0]
+    var btn = document.getElementsByClassName('footer-button')[0]
+    var chatContent = document.getElementsByClassName('chat-content')[0]
+    var msg = document.getElementsByClassName('footer-textarea')[0]
+    var video = document.getElementsByClassName('video')[0]
+    var footer = document.getElementsByClassName('footer')[0]
+    var members = document.getElementsByClassName('members')[0]
+    discuss.onclick = function () {
+        bindClass(this, 'active')
+        unBindClass(member, 'active')
+        showDiscuss()
+    }
+    member.onclick = function () {
+        bindClass(this, 'active')
+        unBindClass(discuss, 'active')
+        showMember()
+    }
+    btn.onclick = function () {
+        if (!msg.value) return
+        var dv = document.createElement('div')
+        dv.className = 'message'
+        dv.innerHTML = '<div class="name">' + 111 + '</div><div class="content">' + msg.value+'</div>'
+        chatContent.appendChild(dv)
+        if (chatContent.scrollHeight > chatContent.offsetHeight) {
+            chatContent.scrollTop = chatContent.scrollHeight
+        }
+        msg.value = ''
+    }
+    msg.onkeydown = function (e) {
+        if (e.keyCode == 13) {
+            if (!msg.value) return
+            var dv = document.createElement('div')
+            dv.className = 'message'
+            dv.innerHTML = '<div class="name">' + 111 + '</div><div class="content">' + msg.value + '</div>'
+            chatContent.appendChild(dv)
+            if (chatContent.scrollHeight > chatContent.offsetHeight) {
+                chatContent.scrollTop = chatContent.scrollHeight
+            }
+            msg.value = ''
+        }
+    }
+    video.ondblclick = function () {
+        var videoWidth = video.offsetWidth
+        var videoParemtWidth = video.parentElement.offsetWidth
+        if (videoWidth > videoParemtWidth) {
+            exitFullscreen(this)
+        }
+        if (videoParemtWidth > videoWidth) {
+            requestFullScreen(this)
+        }
+    }
+
+</script>
+
+
+
+
+
